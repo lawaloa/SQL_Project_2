@@ -19,8 +19,8 @@
 This project seeks to confront the pressing **Maji Ndogo water crisis** through the lens of **SQL analysis**.  
 Rather than treating our dataset as disconnected numbers, we view it as a living story — each row and column carrying the experiences of citizens, workers, and communities.  
 
-Our mission is to:  
-- Step back from isolated data points to discover patterns and hidden correlations.  
+ Our mission is to:  
+- Begin by **cleaning our data**, making sure employee records are accurate and complete.   
 - Use clustering and aggregation to reveal systemic narratives.  
 - Treat data with integrity by validating, auditing, and ensuring trustworthiness.  
 - Provide both granular insights (individual sources, employees, queues) and a panoramic overview (locations, quality, availability).  
@@ -31,8 +31,65 @@ Skills Applied: SQL · Data Exploration · Data Cleaning & Integrity Validation 
 ---
 
 ## 🗂️ Cleaning Our Data – Updating employee data
-SQL queries are used to validate, normalize, and update employee information.  
-This ensures that operational records are trustworthy before deeper analysis.  
+---
+
+This was one of my favorite parts of the project because it reminded me that **data tells stories only when it’s clean and reliable**. In this section, I focused on improving the integrity of the **employee table** in our database.  
+
+When I first pulled it up, I noticed something was missing: **email addresses**. Since we’ll need to send workers reports and figures, I had to generate the emails in a consistent format. Luckily, the convention for our department is straightforward: `first_name.last_name@ndogowater.gov`
+
+
+### 🔧 My Approach  
+
+To build these emails, I:  
+- Selected the `employee_name` column.  
+- Replaced the space in names with a full stop (`.`).  
+- Converted everything to lowercase.  
+- Concatenated it with `@ndogowater.gov`.  
+
+Before updating the database permanently, I first tested the format with a `SELECT` query.  
+
+```sql
+-- Preview email format before updating
+SELECT
+    CONCAT(
+        LOWER(REPLACE(employee_name, ' ', '.')),
+        '@ndogowater.gov'
+    ) AS new_email
+FROM md_water_services.employee;
+```
+
+Once I confirmed the format, I updated the table:
+
+```sql
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE md_water_services.employee
+SET email = CONCAT(
+    LOWER(REPLACE(employee_name, ' ', '.')),
+    '@ndogowater.gov'
+);
+```
+
+### 📱 Cleaning Phone Numbers
+
+While reviewing the table, I also found another issue: **phone numbers**.
+They should have been stored as 12 characters (`+99` + 9 digits), but when I checked with `LENGTH()`, they returned **13 characters** — meaning there was an extra space.
+
+```sql
+-- Check length of phone numbers
+SELECT
+    LENGTH(phone_number)
+FROM md_water_services.employee;
+```
+
+To fix this, I applied the `TRIM()` function to remove unnecessary spaces and updated the records:
+
+```sql
+-- Remove unwanted spaces
+UPDATE md_water_services.employee
+SET phone_number = TRIM(phone_number);
+```
+✅ With these fixes, the employee table is now **clean, consistent, and ready** for the next stage of analysis.
 
 ---
 
