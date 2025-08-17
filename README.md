@@ -27,6 +27,7 @@ Our mission is to:
 
 By weaving together details and broad patterns, this project aims not only to **understand the scope of the problem** but also to **inspire actionable solutions**.  
 
+Skills Applied: SQL · Data Exploration · Data Cleaning & Integrity Validation · Aggregation & Filtering · Conditional Logic · Clustering & Pattern Detection · Insight Reporting
 ---
 
 ## 🗂️ Cleaning Our Data – Updating employee data
