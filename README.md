@@ -94,7 +94,79 @@ SET phone_number = TRIM(phone_number);
 ---
 
 ## 🙌 Honouring the Workers – Finding our best
-Acknowledging the contributions of frontline workers while using SQL to identify top performers and practices that can be scaled across the system.  
+---
+
+This part of the project was meaningful for me because it reminded me that behind every dataset are **real people** who made it possible.  
+Before diving deeper into water analysis, I wanted to take a moment to **acknowledge our field workers** — the backbone of this survey.  
+
+### 🏠 Where Do Our Employees Live?  
+I started by exploring the `employee` table to see the distribution of employees across towns.  
+
+```sql
+SELECT
+    town_name,
+    COUNT(town_name) AS num_of_employees
+FROM md_water_services.employee
+GROUP BY town_name;
+```
+
+**Result sample:**
+
+| town_name | num_of_employees |
+|-----------|------------------|
+| Ilanga    | 3                |
+| Rural     | 29               |
+| Lusaka    | 4                |
+| Zanzibar  | 4                |
+| Dahabu    | 6                |
+| Kintampo  | 1                |
+| Harare    | 5                |
+
+➡️ A large share of our workers live in **smaller rural communities**, often far from central offices, yet they played a crucial role in gathering data under tough conditions.
+
+### 🏅 Recognizing Top Field Surveyors
+
+President Naledi personally asked that we recognize those who worked tirelessly in the field. To do this, I looked into the visits table to find the top 3 field surveyors based on the number of visits recorded.
+
+```sql
+SELECT
+    assigned_employee_id,
+    COUNT(visit_count) AS num_of_visits
+FROM md_water_services.visits
+GROUP BY assigned_employee_id
+ORDER BY num_of_visits DESC
+LIMIT 3;
+```
+**Result table:**
+
+| assigned_employee_id | number_of_visits |
+|-----------------------|------------------|
+| 1                      | 3708             |
+| 30                     | 3676             |
+| 34                     | 3539             |
+
+
+### 📧 Gathering Contact Info for Recognition
+
+With the top surveyors identified, I then pulled their details from the `employee` table so that we could share their achievements and send congratulatory messages.
+
+```sql
+SELECT
+    assigned_employee_id,
+    employee_name,
+    phone_number,
+    email
+FROM md_water_services.employee
+WHERE assigned_employee_id IN (1, 30, 34);
+```
+
+**Result table:**
+
+| assigned_employee_id | employee_name | phone_number  | email                        |
+|-----------------------|---------------|---------------|------------------------------|
+| 1                     | Bello Azibo   | +99643864786  | bello.azibo@ndogowater.gov   |
+| 30                    | Pili Zola     | +99822478933  | pili.zola@ndogowater.gov     |
+| 34                    | Rudo Imani    | +99046972648  | rudo.imani@ndogowater.gov    |
 
 ---
 
