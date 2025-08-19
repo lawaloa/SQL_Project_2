@@ -171,7 +171,131 @@ WHERE assigned_employee_id IN (1, 30, 34);
 ---
 
 ## 🌍 Analysing Locations – Understanding where the water sources are
-Mapping the distribution of water sources, identifying underserved areas, and highlighting clusters that demand urgent attention.  
+---
+
+This part of the project was personal for me. I wanted to step into the shoes of the surveyors, to understand **where exactly the water sources are in Maji Ndogo**. By digging into the `location` table and focusing on `province_name`, `town_name`, and `location_type`, I could begin to see the bigger picture of our water distribution.  
+
+---
+
+### 🏘 Records per Town  
+
+To start, I wrote a query to count the number of records for each town:  
+
+```sql
+SELECT
+	COUNT(town_name) AS records_per_town,
+    town_name
+FROM md_water_services.location
+GROUP BY town_name
+ORDER BY records_per_town DESC;
+```
+
+**Results sample:**  
+
+| records_per_town | town_name |
+|------------------|-----------|
+| 23740            | Rural     |
+| 1650             | Harare    |
+| 1090             | Amina     |
+| 1070             | Lusaka    |
+| 990              | Mrembo    |
+| 930              | Asmara    |
+| ...              | ...       |
+
+> At this point, it became clear to me that **the majority of water sources are concentrated in small rural communities**, scattered across Maji Ndogo.
+
+
+### 🗺 Records per Province
+
+Next, I wanted to zoom out and see the provincial picture.
+
+```sql
+SELECT
+	COUNT(town_name) AS records_per_province,
+    province_name
+FROM md_water_services.location
+GROUP BY province_name
+ORDER BY records_per_province DESC;
+```
+
+**Results sample:**  
+
+| records_per_province | province_name |
+|-----------------------|---------------|
+| 9510                 | Kilimani      |
+| 8940                 | Akatsi        |
+| 8220                 | Sokoto        |
+| 6950                 | Amanzi        |
+| 6030                 | Hawassa       |
+| ...                   | ...           |
+
+> This showed me that every province is well represented in the dataset — giving me confidence that the survey work was thorough and reliable.
+
+### 📊 Province + Town Breakdown
+
+To go deeper, I combined both `province_name` and `town_name` to see how records were distributed within provinces.
+
+```sql
+SELECT
+    province_name,
+    town_name,
+    COUNT(town_name) AS records_per_town
+FROM
+    md_water_services.location
+GROUP BY
+    province_name,
+    town_name
+ORDER BY
+    province_name ASC,
+    records_per_town DESC;
+```
+
+**Results sample:**  
+
+| province_name | town_name | records_per_town |
+|---------------|-----------|------------------|
+| Akatsi        | Rural     | 6290             |
+| Akatsi        | Lusaka    | 1070             |
+| Akatsi        | Harare    | 800              |
+| Akatsi        | Kintampo  | 780              |
+| Amanzi        | Rural     | 3100             |
+| Amanzi        | Asmara    | 930              |
+
+> These results reassured me: our field surveyors did an excellent job documenting the country’s water crisis across every province and town.
+
+### 🏞 Location Type Breakdown
+
+Finally, I wanted to compare **urban vs rural sources**.
+
+```sql
+SELECT
+	COUNT(location_type) AS num_sources,
+    location_type
+FROM md_water_services.location
+GROUP BY location_type;
+```
+
+**Results:**  
+
+| num_sources | location_type |
+|-------------|---------------|
+| 15910       | Urban         |
+| 23740       | Rural         |
+
+> Numbers alone don’t always tell the story, so I converted this into percentages:
+
+```sql
+SELECT 23740 / (15910 + 23740) * 100;
+```
+
+> 👉 **60% of all water sources are in rural communities**.
+
+> [!NOTE] 💡 **Insights**  
+> - The dataset properly canvassed the entire country, reflecting the situation on the ground.  
+> - 60% of water sources are in rural areas — which means any solutions must be designed with these communities in mind.  
+> - The even provincial distribution builds confidence in the integrity of the dataset.  
+>   
+> For me, this analysis was more than just numbers. It showed how data can be transformed into trustworthy narratives about real communities and their struggles.  
 
 ---
 
