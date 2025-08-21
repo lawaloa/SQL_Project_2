@@ -290,7 +290,8 @@ SELECT 23740 / (15910 + 23740) * 100;
 
 > 👉 **60% of all water sources are in rural communities**.
 
-> 💡 **Insights**  
+> 💡 **Insights:**
+>  
 > - The dataset properly canvassed the entire country, reflecting the situation on the ground.  
 > - 60% of water sources are in rural areas — which means any solutions must be designed with these communities in mind.  
 > - The even provincial distribution builds confidence in the integrity of the dataset.  
