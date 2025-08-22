@@ -435,13 +435,36 @@ ORDER BY Pct_served_per_source DESC;
 
 💧 **Water Source Distribution by Percentage:**
 
-| Type of Water Source     | Pct_served_per_source |
+| type_of_water_source     | Pct_served_per_source |
 |--------------------------|-----------------------|
 | Shared Tap               | 43%                   |
 | Well                     | 18%                   |
 | Tap in Home              | 17%                   |
 | Tap in Home (Broken)     | 14%                   |
 | River                    | 9%                    |
+
+#### 📘 Making Sense of It
+
+- **43%** of people rely on shared taps, with ~2,000 people per tap.  
+  This explains the long queues we observed earlier.
+
+- **31%** of people have taps in their homes — but almost half of them don’t work.  
+  The issue isn’t the taps themselves, but the infrastructure behind them: treatment plants, pipes, and pumps.
+
+- **18%** of people use wells, but only **28%** are clean — a major public health challenge.
+
+---
+
+##### 💡 Insights
+
+- Shared taps are under the most pressure and should be the top priority for upgrades.
+
+- Broken infrastructure is locking millions out of water access, even where taps exist.
+
+- This dataset doesn’t just give statistics — it reflects the lived reality of communities struggling with water.
+
+> For me, this was more than SQL queries.  
+> It was about turning rows of data into a narrative of who gets water, how, and at what cost to their daily lives.
 
 ---
 
