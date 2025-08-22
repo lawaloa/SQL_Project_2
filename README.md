@@ -347,13 +347,13 @@ ORDER BY num_of_source DESC;
 
 **Results Sample:**
 
-| Type of Water Source     | Number of Sources |
-|--------------------------|-------------------|
-| well                     | 17383             |
-|  tap_in_home             | 7265              |
-| tap_in_home_broken       | 5856              |
-| shared_tap               | 5767              |
-|   river                  | 3379              |
+| type_of_water_source     | num_of_sources |
+|--------------------------|----------------|
+| well                     | 17383          |
+|  tap_in_home             | 7265           |
+| tap_in_home_broken       | 5856           |
+| shared_tap               | 5767           |
+|   river                  | 3379           |
 
 
  #### 📝 3. Average People per Source
@@ -369,7 +369,7 @@ GROUP BY type_of_water_source;
 
 **Results Sample:** Average People per Source
 
-| Type of Water Source   | Avg People per Source  |
+| type_of_water_source   | avg_served_per_source  |
 |------------------------|------------------------|
 | tap_in_home            | 644                    |
 | tap_in_home_broken     | 649                    |
@@ -392,6 +392,56 @@ GROUP BY type_of_water_source;
 > Now the numbers make more sense: wells appear less pressured,  
 > but public shared taps are under immense strain — serving over **2,000 people per tap**.
 
+#### 📝 4. Total Population Served by Each Source
+---
+
+```sql
+SELECT 
+    type_of_water_source,
+    SUM(number_of_people_served) AS population_served
+FROM md_water_services.water_source
+GROUP BY type_of_water_source
+ORDER BY population_served DESC;
+```
+
+💧 **Water Source Coverage:**
+
+| type_of_water_source     | population_served|
+|--------------------------|-----------------|
+| Shared Tap               | 11945272        |
+| Well                     | 4841724         |
+| Tap in Home              | 4678880         |
+| Tap in Home (Broken)     | 3799720         |
+| River                    | 2362544         |
+
+It’s hard to grasp raw totals — so I converted them into percentages.
+
+#### 📝 5. Percentages of People Served
+---
+
+```sql
+SELECT 
+    type_of_water_source,
+    SUM(number_of_people_served) AS Total_served_per_source,
+    ROUND(
+        (SUM(number_of_people_served) * 100.0 / 
+            (SELECT SUM(number_of_people_served) 
+             FROM md_water_services.water_source))
+    ) AS Pct_served_per_source
+FROM md_water_services.water_source
+GROUP BY type_of_water_source
+ORDER BY Pct_served_per_source DESC;
+```
+
+💧 **Water Source Distribution by Percentage:**
+
+| Type of Water Source     | Pct_served_per_source |
+|--------------------------|-----------------------|
+| Shared Tap               | 43%                   |
+| Well                     | 18%                   |
+| Tap in Home              | 17%                   |
+| Tap in Home (Broken)     | 14%                   |
+| River                    | 9%                    |
 
 ---
 
