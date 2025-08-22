@@ -301,7 +301,97 @@ SELECT 23740 / (15910 + 23740) * 100;
 ---
 
 ## 💦 Diving into the Sources – Seeing the scope of the problem
-Analyzing the quality, reliability, and accessibility of each water source, while quantifying the true extent of the crisis.  
+---
+
+The **`water_source`** table is one of the largest in this dataset — and for me, it felt like the heart of the whole project. 🚰  
+
+When I first opened it, I didn’t just see rows and columns — I saw stories of families, communities, and how they access something as basic (yet vital) as water.  
+
+To really understand it, I took some time to **explore the table myself**: scanning through the columns, scribbling notes, and running queries to see what patterns would emerge.  
+
+From this table, I could uncover two powerful pieces of information:  
+- The **different types of water sources** available in Maji Ndogo  
+- The **number of people depending on each one**  
+
+---
+
+### 🔍 Key Questions I Explored  
+
+1. **How many people were actually surveyed in total?**  
+2. **How many wells, taps, and rivers do we have recorded?**  
+3. **On average, how many people share each type of water source?**  
+4. **And importantly, how many people in total are served by each water source type?**  
+---
+
+#### 📝 1. Total Number of People Surveyed  
+---
+
+```sql
+SELECT 
+    SUM(number_of_people_served) AS num_of_surveyed
+FROM md_water_services.water_source;
+```  
+**Result:** ~27 million citizens surveyed across Maji Ndogo.
+
+#### 📝 2. Number of Sources
+---
+
+```sql
+SELECT
+    type_of_water_source,
+    COUNT(type_of_water_source) AS num_of_source
+FROM md_water_services.water_source
+GROUP BY type_of_water_source
+ORDER BY num_of_source DESC;
+```
+
+**Results Sample:**
+
+| Type of Water Source     | Number of Sources |
+|--------------------------|-------------------|
+| well                     | 17383             |
+|  tap_in_home             | 7265              |
+| tap_in_home_broken       | 5856              |
+| shared_tap               | 5767              |
+|   river                  | 3379              |
+
+
+ #### 📝 3. Average People per Source
+---
+
+```sql
+SELECT 
+    type_of_water_source,
+    ROUND(AVG(number_of_people_served)) AS avg_served_per_source
+FROM md_water_services.water_source
+GROUP BY type_of_water_source;
+```
+
+**Results Sample:** Average People per Source
+
+| Type of Water Source   | Avg People per Source  |
+|------------------------|------------------------|
+| tap_in_home            | 644                    |
+| tap_in_home_broken     | 649                    |
+| well                   | 279                    |
+| shared_tap             | 2071                   |
+| river                  | 699                    |
+
+> [!IMPORTANT]
+> **At first glance, this looks strange:**  
+> Does a home tap really serve 644 people? Of course not.  
+> Here's the catch: surveyors grouped multiple households into a single `tap_in_home` record.  
+> With ~6 people per household, one entry of “644 people” actually represents about 100 taps.
+>
+> 💡 **Lesson Learned**  
+> Data isn’t just numbers — its real value comes from interpretation.  
+> Presenting raw figures to policymakers without context can be misleading.  
+> Imagine being asked, “Why does it say 644 people share one home tap?” Without proper explanation, we’d have no good answer.
+>
+> ✅ **Clarified Insight**  
+> Now the numbers make more sense: wells appear less pressured,  
+> but public shared taps are under immense strain — serving over **2,000 people per tap**.
+
 
 ---
 
