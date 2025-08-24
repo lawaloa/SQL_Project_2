@@ -4,7 +4,7 @@
 ## 📑 Table of Contents
 ---
 
-1. [📘 Introduction – Setting the stage for our data exploration journey](#-introduction--setting-the-stage-for-our-data-exploration-journey)  
+1. [📘 Project Overview  – Setting the stage for our data exploration journey](#-project-overview--setting-the-stage-for-our-data-exploration-journey)  
 2. [🗂️ Cleaning Our Data – Updating employee data](#️-cleaning-our-data--updating-employee-data)  
 3. [🙌 Honouring the Workers – Finding our best](#-honouring-the-workers--finding-our-best)  
 4. [🌍 Analysing Locations – Understanding where the water sources are](#-analysing-locations--understanding-where-the-water-sources-are)  
@@ -15,19 +15,24 @@
 
 ---
 
-## 📘 Introduction – Setting the stage for our data exploration journey
-This project seeks to confront the pressing **Maji Ndogo water crisis** through the lens of **SQL analysis**.  
-Rather than treating our dataset as disconnected numbers, we view it as a living story — each row and column carrying the experiences of citizens, workers, and communities.  
+## 📘 Project Overview  – Setting the stage for our data exploration journey
+--- 
 
- Our mission is to:  
-- Begin by **cleaning our data**, making sure employee records are accurate and complete.   
-- Use clustering and aggregation to reveal systemic narratives.  
-- Treat data with integrity by validating, auditing, and ensuring trustworthiness.  
-- Provide both granular insights (individual sources, employees, queues) and a panoramic overview (locations, quality, availability).  
+This project is personal to me because it goes beyond running SQL queries — it’s about telling the story of the **Maji Ndogo water crisis** through data.  
 
-By weaving together details and broad patterns, this project aims not only to **understand the scope of the problem** but also to **inspire actionable solutions**.  
+When I first explored the dataset, I didn’t just see rows and columns. I saw communities waiting in long queues, families depending on unsafe water, and field workers trying their best to bridge a massive gap.  
 
-Skills Applied: SQL · Data Exploration · Data Cleaning & Integrity Validation · Aggregation & Filtering · Conditional Logic · Clustering & Pattern Detection · Insight Reporting
+Here’s how I approached it:  
+- I started by **cleaning and validating the data** to make sure the foundation was trustworthy.  
+- Then, I used **clustering and aggregation** to uncover the bigger narratives hidden beneath isolated records.  
+- I treated each data point as someone’s lived experience — not just a number — which made **integrity checks and auditing** essential.  
+- Finally, I zoomed in on both **granular details** (individual sources, employees, queues) and the **big picture** (provincial coverage, quality, and availability).  
+
+For me, this project isn’t just about technical SQL skills. It’s about showing how **data can become a voice** — turning hidden patterns into insights that can guide real-world solutions for the communities who need them most.  
+
+
+**Skills Applied:** SQL · Data Aggregation · Counting · Grouping · Filtering · Data Validation
+
 ---
 
 ## 🗂️ Cleaning Our Data – Updating employee data
@@ -406,6 +411,8 @@ ORDER BY population_served DESC;
 
 💧 **Water Source Coverage:**
 
+<a name="my-table"></a>
+
 | type_of_water_source     | population_served|
 |--------------------------|-----------------|
 | Shared Tap               | 11945272        |
@@ -469,7 +476,70 @@ ORDER BY Pct_served_per_source DESC;
 ---
 
 ## 🛠️ Start of a Solution – Thinking about how we can repair
-Exploring interventions such as infrastructure repairs, improved allocation, or resource optimization — modeled through SQL insights.  
+---
+
+Looking at the water crisis, one thing became clear to me:  
+💭 *we can’t fix everything at once.*  
+
+So, I asked myself a simple but important question:  
+**Where should we start to make the biggest impact?**  
+
+My guiding principle was:  
+👉 **Fix the water sources that serve the most people first.**
+
+That way, every improvement reaches as many lives as possible.  
+
+To do this, I turned to one of my favorite SQL tools: the `RANK()` window function. It allows me to order water sources by the total number of people depending on them.  
+
+---
+
+### 🔹 Step 1: Identify What Matters  
+
+To answer this, I needed three key things:  
+
+- The **type of water source** ✅  
+- The **total population served per source type** ✅  
+- A **rank that shows priority** 🔑  
+
+---
+
+### 🔹 Step 2: Explore the Data  
+
+Here’s a quick snapshot of what I found:  
+
+See the [table here](#my-table) for more details.
+
+| type_of_water_source  | population_served |
+|------------------------|------------------|
+| shared_tap             | 11945272        |
+| well                   | 4841724         |
+| tap_in_home            | 4678880         |
+| tap_in_home_broken     | 3799720         |
+| river                  | 2362544         |
+
+
+Right away, **shared taps** stood out as the lifeline for millions of people, followed by **wells** and **broken taps**.  
+
+But since *tap_in_home* already represents the ideal solution, I decided to **exclude it from the ranking**.  
+
+---
+
+### 🔹 Step 3: Ranking with SQL  
+
+Here’s the query I used:  
+
+```sql
+SELECT  
+    type_of_water_source,  
+    SUM(number_of_people_served) AS Total_served_per_source,  
+    RANK() OVER (  
+        ORDER BY SUM(number_of_people_served) DESC  
+    ) AS Rank_by_population  
+FROM   
+    md_water_services.water_source  
+GROUP BY   
+    type_of_water_source;
+ 
 
 ---
 
