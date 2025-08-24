@@ -718,7 +718,7 @@ FROM
 
 That’s over two years of fieldwork, walking alongside people in their everyday struggle for water. It made me think: every queue time here was **real time stolen** from work, family, and education.
 
-## ⏱️ Question 2: Average Queue Time
+### ⏱️ Question 2: Average Queue Time
 
 ```sql
 SELECT  
