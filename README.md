@@ -30,7 +30,7 @@ Here’s how I approached it:
 
 For me, this project isn’t just about technical SQL skills. It’s about showing how **data can become a voice** — turning hidden patterns into insights that can guide real-world solutions for the communities who need them most.  
 
-✅ **Skills Applied:** SQL · Data Aggregation · Counting · Grouping · Filtering · Data Validation · Data Exploration · Window Functions · Ranking Queries · Analytical Thinking · Data Storytelling
+✅ **Skills Applied:** SQL · Data Aggregation · Counting · Grouping · Filtering · Data Validation · Data Exploration · Queue Analysis · Window Functions · Ranking Queries · Analytical Thinking · Data Storytelling
 
 ---
 
@@ -540,9 +540,13 @@ GROUP BY
 | river                 | 2,362,544                | 4                   |
 
 This gave me a clear action plan:
+
 1️⃣ Start with **shared taps**.
+
 2️⃣ Then **improve wells**.
+
 3️⃣ Next, fix **broken taps**.
+
 4️⃣ And so on, down the line.
 
 For me, this wasn’t just about ranking numbers. It was about uncovering a practical strategy to maximize impact — ensuring that the first interventions benefit the largest number of people.
@@ -672,7 +676,172 @@ By experimenting with `RANK`, `DENSE_RANK`, and `ROW_NUMBER`, I realized:
 ---
 
 ## 📊 Analysing Queues – Uncovering when citizens collect water
-Investigating collection patterns, peak demand times, and the stress they place on both citizens and infrastructure.  
+--- 
+
+This is where the project really hit me the hardest. Looking at queues might just feel like running more SQL queries, but for me, it was about visualizing the lived reality of the people in **Maji Ndogo**.  
+
+Behind every row in the `visits` table is someone who walked for hours, stood under the sun, and waited patiently just to collect water. Sometimes children. Sometimes elders. It stopped feeling like “just data” — it became personal.  
+
+So, I stretched out, grabbed some water myself, and dug into the data.  
+
+---
+
+### 📝 Recap
+
+The `visits` table recorded all the trips our field surveyors made to each water source. For most places, one visit was enough. But when queues formed, multiple visits were made to measure how long people actually waited.  
+
+That gave us:
+- The **time** the visit was recorded  
+- How **many times** a site was visited  
+- And the **queue duration** at each source  
+
+---
+
+### ❓ What I wanted to answer
+1. How long did the survey last?  
+2. What’s the **average time** people spend in queues?  
+3. How does queuing differ across **days of the week**?  
+4. Can we break it down even further — by **hours in a day**?  
+
+---
+
+### ⏳ Question 1: How long did the survey take?
+
+```sql
+SELECT   
+    DATEDIFF(MAX(time_of_record), MIN(time_of_record)) AS survey_duration_days  
+FROM   
+    md_water_services.visits;
+```
+
+📊 **Result:** `924` days (~2.5 years!)
+
+That’s over two years of fieldwork, walking alongside people in their everyday struggle for water. It made me think: every queue time here was **real time stolen** from work, family, and education.
+
+## ⏱️ Question 2: Average Queue Time
+
+```sql
+SELECT  
+    AVG(NULLIF(time_in_queue, 0)) AS avg_time_in_queue  
+FROM  
+    md_water_services.visits;
+```
+
+📊 **Result:** `123` minutes
+
+On average, people without taps at home spend **two hours** fetching water. Imagine doing this daily — the cost isn’t just time, it’s opportunity.
+
+### 📅 Question 3: Queues by Day of the Week
+
+```sql
+SELECT   
+    DAYNAME(time_of_record) AS day_of_week,  
+    ROUND(AVG(time_in_queue)) AS avg_queue_time  
+FROM   
+    visits  
+WHERE   
+    time_in_queue != 0  
+    AND time_in_queue IS NOT NULL  
+GROUP BY   
+    day_of_week;
+```
+
+📊 **Result:**
+
+| day\_of\_week | avg\_queue\_time |
+| ------------- | ---------------- |
+| Friday        | 120              |
+| Saturday      | 246              |
+| Sunday        | 82               |
+| Monday        | 137              |
+| Tuesday       | 108              |
+| Wednesday     | 97               |
+| Thursday      | 105              |
+
+➡️ Saturdays stand out: queues **double** compared to weekdays.
+
+➡️ Sundays are lowest, reflecting cultural rest and family priorities.
+
+### ⏰ Question 4: Queues by Hour of the Day
+
+```sql
+SELECT   
+    TIME_FORMAT(TIME(time_of_record), '%H:00') AS hour_of_day,  
+    ROUND(AVG(time_in_queue)) AS avg_queue_time  
+FROM   
+    visits  
+GROUP BY   
+    hour_of_day  
+ORDER BY   
+    hour_of_day;
+```
+
+📊 **Result (excerpt):**
+
+| hour\_of\_day | avg\_queue\_time |
+| ------------- | ---------------- |
+| 06:00         | 149              |
+| 07:00         | 149              |
+| 08:00         | 149              |
+| ...           | ...              |
+
+➡️ Mornings and evenings were peak hours — people collect water before or after work.
+
+### 🧩 Pivoting Queue Times by Day & Hour
+
+```sql
+SELECT  
+    TIME_FORMAT(TIME(time_of_record), '%H:00') AS hour_of_day,  
+    -- Sunday  
+    ROUND(AVG(CASE WHEN DAYNAME(time_of_record) = 'Sunday' THEN time_in_queue END),0) AS Sunday,  
+    -- Monday  
+    ROUND(AVG(CASE WHEN DAYNAME(time_of_record) = 'Monday' THEN time_in_queue END),0) AS Monday,  
+    -- Tuesday  
+    ROUND(AVG(CASE WHEN DAYNAME(time_of_record) = 'Tuesday' THEN time_in_queue END),0) AS Tuesday,  
+    -- Wednesday  
+    ROUND(AVG(CASE WHEN DAYNAME(time_of_record) = 'Wednesday' THEN time_in_queue END),0) AS Wednesday,  
+    -- Thursday  
+    ROUND(AVG(CASE WHEN DAYNAME(time_of_record) = 'Thursday' THEN time_in_queue END),0) AS Thursday,  
+    -- Friday  
+    ROUND(AVG(CASE WHEN DAYNAME(time_of_record) = 'Friday' THEN time_in_queue END),0) AS Friday,  
+    -- Saturday  
+    ROUND(AVG(CASE WHEN DAYNAME(time_of_record) = 'Saturday' THEN time_in_queue END),0) AS Saturday  
+FROM  
+    visits  
+WHERE  
+    time_in_queue != 0  
+GROUP BY  
+    hour_of_day  
+ORDER BY  
+    hour_of_day;
+```
+
+📊 **Pivot Result (excerpt):**
+
+| hour\_of\_day | Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday |
+| ------------- | ------ | ------ | ------- | --------- | -------- | ------ | -------- |
+| 06:00         | 79     | 190    | 134     | 112       | 134      | 153    | 247      |
+| 07:00         | 82     | 186    | 128     | 111       | 139      | 156    | 247      |
+| 08:00         | 86     | 183    | 130     | 119       | 129      | 153    | 247      |
+| 09:00         | 84     | 127    | 105     | 94        | 99       | 107    | 252      |
+| 10:00         | 83     | 119    | 99      | 89        | 95       | 112    | 259      |
+| ...           | ...    | ...    | ...     | ...       | ...      | ...    | ...      |
+
+### 🌍 My Reflection
+
+This was the most eye-opening part of the project for me. By pivoting the data and visualizing queues across days and hours, I could literally **see people’s daily and weekly rhythms** in the data.
+
+- Mondays: long morning/evening queues as people prepare for the week
+
+- Wednesdays: shortest queues (except evenings)
+
+- Saturdays: brutal queues — people storing water for the week
+
+- Sundays: lowest queues — time reserved for faith and family
+
+For me, SQL stopped being just a technical tool here. It became a lens into human lives.
+
+> 💡 **Lesson:** Data analysis isn’t just about crunching numbers — it’s about telling the human story behind the numbers.
 
 ---
 
