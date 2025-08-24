@@ -30,8 +30,7 @@ Here’s how I approached it:
 
 For me, this project isn’t just about technical SQL skills. It’s about showing how **data can become a voice** — turning hidden patterns into insights that can guide real-world solutions for the communities who need them most.  
 
-
-**Skills Applied:** SQL · Data Aggregation · Counting · Grouping · Filtering · Data Validation
+✅ **Skills Applied:** SQL · Data Aggregation · Counting · Grouping · Filtering · Data Validation · Data Exploration · Window Functions · Ranking Queries · Analytical Thinking · Data Storytelling
 
 ---
 
@@ -505,18 +504,7 @@ To answer this, I needed three key things:
 
 ### 🔹 Step 2: Explore the Data  
 
-Here’s a quick snapshot of what I found:  
-
-See the [table here](#my-table) for more details.
-
-| type_of_water_source  | population_served |
-|------------------------|------------------|
-| shared_tap             | 11945272        |
-| well                   | 4841724         |
-| tap_in_home            | 4678880         |
-| tap_in_home_broken     | 3799720         |
-| river                  | 2362544         |
-
+I took a look at the [Water Source Coverage table](#my-table) from the last query again.
 
 Right away, **shared taps** stood out as the lifeline for millions of people, followed by **wells** and **broken taps**.  
 
@@ -536,10 +524,150 @@ SELECT
         ORDER BY SUM(number_of_people_served) DESC  
     ) AS Rank_by_population  
 FROM   
-    md_water_services.water_source  
+    md_water_services.water_source
+WHERE type_of_water_source != "tap_in_home" 
 GROUP BY   
     type_of_water_source;
- 
+```
+
+🔹 **Step 3: Results**
+
+| type_of_water_source   | Total_served_per_source | Rank_by_population |
+|------------------------|-------------------------|---------------------|
+| shared_tap            | 11,945,272               | 1                   |
+| well                  | 4,841,724                | 2                   |
+| tap_in_home_broken    | 3,799,720                | 3                   |
+| river                 | 2,362,544                | 4                   |
+
+This gave me a clear action plan:
+1️⃣ Start with **shared taps**.
+2️⃣ Then **improve wells**.
+3️⃣ Next, fix **broken taps**.
+4️⃣ And so on, down the line.
+
+For me, this wasn’t just about ranking numbers. It was about uncovering a practical strategy to maximize impact — ensuring that the first interventions benefit the largest number of people.
+
+### 🔹 Step 4: Ranking Individual Sources within a Type
+
+To prioritize specific source IDs, I wrote the following query:
+
+```sql
+SELECT  
+    source_id,  
+    type_of_water_source,  
+    number_of_people_served,  
+    RANK() OVER (  
+        ORDER BY number_of_people_served DESC  
+    ) AS priority_rank  
+FROM   
+    md_water_services.water_source
+WHERE type_of_water_source != "tap_in_home";
+```
+
+🔹 **Step 4: Results**
+
+| source\_id   | type\_of\_water\_source | number\_of\_people\_served | priority\_rank |
+| ------------ | ----------------------- | -------------------------- | -------------- |
+| HaRu19509224 | shared\_tap             | 3998                       | 1              |
+| AkRu05603224 | shared\_tap             | 3998                       | 1              |
+| AkRu04862224 | shared\_tap             | 3996                       | 3              |
+| KiHa22867224 | shared\_tap             | 3996                       | 3              |
+| AmAs10911224 | shared\_tap             | 3996                       | 3              |
+| HaRu19839224 | shared\_tap             | 3994                       | 6              |
+| KiZu31330224 | shared\_tap             | 3994                       | 6              |
+| KiZu31415224 | shared\_tap             | 3992                       | 8              |
+| KiRu28630224 | shared\_tap             | 3992                       | 8              |
+| KiRu26218224 | shared\_tap             | 3990                       | 10             |
+| ...          | ...                     | ...                        | ...            |
+
+
+### 🔹 Step 5: What if we use `DENSE_RANK()`?  
+
+While experimenting, I started wondering:  
+💭 *what happens if two water sources serve the same number of people?*  
+
+Using plain `RANK()`, SQL will **skip a number** when there’s a tie. That’s technically fine, but I felt it might be confusing for engineers or decision-makers reading the report.  
+
+That’s when I reached for `DENSE_RANK()`.  
+
+Unlike `RANK()`, it keeps the sequence clean — so if two water sources tie, they **share the same rank** without leaving gaps.  
+
+This small shift makes the results easier to interpret and more intuitive for the people who’ll actually be using them to make decisions. 
+
+```sql
+SELECT  
+    source_id,  
+    type_of_water_source,  
+    number_of_people_served,  
+    DENSE_RANK() OVER (  
+        ORDER BY number_of_people_served DESC  
+    ) AS priority_rank  
+FROM   
+    md_water_services.water_source
+WHERE type_of_water_source != "tap_in_home";
+```
+
+📊 **Results with DENSE_RANK**
+
+| source\_id   | type\_of\_water\_source | number\_of\_people\_served | priority\_rank |
+| ------------ | ----------------------- | -------------------------- | -------------- |
+| HaRu19509224 | shared\_tap             | 3998                       | 1              |
+| AkRu05603224 | shared\_tap             | 3998                       | 1              |
+| AkRu04862224 | shared\_tap             | 3996                       | 2              |
+| KiHa22867224 | shared\_tap             | 3996                       | 2              |
+| AmAs10911224 | shared\_tap             | 3996                       | 2              |
+| HaRu19839224 | shared\_tap             | 3994                       | 3              |
+| KiZu31330224 | shared\_tap             | 3994                       | 3              |
+| KiZu31415224 | shared\_tap             | 3992                       | 4              |
+| KiRu28630224 | shared\_tap             | 3992                       | 4              |
+| KiRu26218224 | shared\_tap             | 3990                       | 5              |
+| ...          | ...                     | ...                        | ...            |
+
+🔎 **Difference**: With `DENSE_RANK`, the ranking feels **more natural and sequential**.
+
+
+### 🔹 Step 6: What about `ROW_NUMBER()`?
+
+`ROW_NUMBER()` forces a unique rank for every record, even when values are equal. This eliminates ambiguity for engineers deciding which exact source to fix first.
+
+```sql
+SELECT  
+    source_id,  
+    type_of_water_source,  
+    number_of_people_served,  
+    ROW_NUMBER() OVER (  
+        ORDER BY number_of_people_served DESC  
+    ) AS priority_rank  
+FROM   
+    md_water_services.water_source
+WHERE type_of_water_source != "tap_in_home";
+```
+
+📊 **Results with ROW_NUMBER**
+
+| source\_id   | type\_of\_water\_source | number\_of\_people\_served | priority\_rank |
+| ------------ | ----------------------- | -------------------------- | -------------- |
+| HaRu19509224 | shared\_tap             | 3998                       | 1              |
+| AkRu05603224 | shared\_tap             | 3998                       | 2              |
+| AkRu04862224 | shared\_tap             | 3996                       | 3              |
+| KiHa22867224 | shared\_tap             | 3996                       | 4              |
+| AmAs10911224 | shared\_tap             | 3996                       | 5              |
+| HaRu19839224 | shared\_tap             | 3994                       | 6              |
+| KiZu31330224 | shared\_tap             | 3994                       | 7              |
+| KiZu31415224 | shared\_tap             | 3992                       | 8              |
+| KiRu28630224 | shared\_tap             | 3992                       | 9              |
+| KiRu26218224 | shared\_tap             | 3990                       | 10             |
+| ...          | ...                     | ...                        | ...            |
+
+### 🛠️ Reflection
+
+By experimenting with `RANK`, `DENSE_RANK`, and `ROW_NUMBER`, I realized:
+
+- **RANK()** → Good for measuring repair progress across equal priorities.
+
+- **DENSE_RANK()** → Easier to communicate priorities without gaps in numbers.
+
+- **ROW_NUMBER()** → Best when every source needs a **unique repair order**.
 
 ---
 
