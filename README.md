@@ -4,7 +4,7 @@
 ## 📑 Table of Contents
 ---
 
-1. [📘 Project Overview  – Setting the stage for our data exploration journey](#-project-overview--setting-the-stage-for-our-data-exploration-journey) 
+1. [📘 Project Overview  – Setting the stage for our data exploration journey](#️-project-overview--setting-the-stage-for-our-data-exploration-journey) 
 2. [🗂️ Cleaning Our Data – Updating employee data](#️-cleaning-our-data--updating-employee-data)  
 3. [🙌 Honouring the Workers – Finding our best](#-honouring-the-workers--finding-our-best)  
 4. [🌍 Analysing Locations – Understanding where the water sources are](#-analysing-locations--understanding-where-the-water-sources-are)  
