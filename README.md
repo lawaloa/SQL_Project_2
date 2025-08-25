@@ -4,15 +4,15 @@
 ## 📑 Table of Contents
 ---
 
-1. [📘 Project Overview  – Setting the stage for our data exploration journey](#-project-overview--setting-the-stage-for-our-data-exploration-journey)  
+1. [📘 Project Overview  – Setting the stage for our data exploration journey](#-project-overview--setting-the-stage-for-our-data-exploration-journey) 
 2. [🗂️ Cleaning Our Data – Updating employee data](#️-cleaning-our-data--updating-employee-data)  
 3. [🙌 Honouring the Workers – Finding our best](#-honouring-the-workers--finding-our-best)  
 4. [🌍 Analysing Locations – Understanding where the water sources are](#-analysing-locations--understanding-where-the-water-sources-are)  
-5. [💦 Diving into the Sources – Seeing the scope of the problem](#-diving-into-the-sources--seeing-the-scope-of-the-problem)  
+5. [💦 Diving into the Sources – Seeing the scope of the problem](#-diving-into-the-sources--seeing-the-scope-of-the-problem) 
 6. [🛠️ Start of a Solution – Thinking about how we can repair](#️-start-of-a-solution--thinking-about-how-we-can-repair)  
-7. [📊 Analysing Queues – Uncovering when citizens collect water](#-analysing-queues--uncovering-when-citizens-collect-water)  
-8. [📝 Reporting Insights – Assembling our insights into a story](#-reporting-insights--assembling-our-insights-into-a-story)  
-
+7. [📊 Analysing Queues – Uncovering when citizens collect water](#-analysing-queues--uncovering-when-citizens-collect-water) 
+8. [📝 Reporting Insights – Assembling our insights into a story](#-reporting-insights--assembling-our-insights-into-a-story) 
+9. [🛠 Practical Solutions - Recommendation](#-practical-solutions---recommendation)  
 ---
 
 ## 📘 Project Overview  – Setting the stage for our data exploration journey
@@ -846,7 +846,39 @@ For me, SQL stopped being just a technical tool here. It became a lens into huma
 ---
 
 ## 📝 Reporting Insights – Assembling our insights into a story
-Transforming raw queries into meaningful narratives that stakeholders can understand.  
-Our final deliverable is not just a dataset, but a **story of resilience, challenge, and possibility**.  
+---
+
+## 📝 Reporting Insights  
+
+As I worked through the analysis, I started thinking not just about the data, but what it really meant for people on the ground. Here’s the plan I began shaping from my findings:  
+
+1. **Prioritize the sources that serve the most people.**  
+   - Shared taps serve the largest number of people. Improving these first will have the biggest impact.  
+   - Wells are widely used but many are contaminated. Fixing them would directly improve health outcomes.  
+   - Repairing broken infrastructure can instantly restore access for many, while also reducing queue times for others. In this way, one intervention solves multiple problems at once.  
+   - Installing household taps sounds ideal, but the data showed this would stretch resources too thin. For now, where queue times are already manageable, this won’t be a priority.  
+
+2. **Account for rural realities.**  
+   - Over **60% of water sources are in rural areas**. This means logistics matter—poor road access, limited supplies, and fewer local labor options. These challenges must shape how any intervention is planned and deployed.  
 
 ---
+
+## 🛠 Practical Solutions
+---
+
+From insights to action, here are the solutions I mapped out:  
+
+| **Challenge** | **Short-Term Solution** | **Long-Term Solution** |
+|---------------|--------------------------|-------------------------|
+| Communities depending on rivers | Dispatch water trucks to provide temporary relief | Drill wells for a permanent clean water source |
+| Contaminated wells | Install filters (UV for biological, reverse osmosis for chemical pollution) | Investigate and address root causes of contamination |
+| Overloaded shared taps | Send additional tankers at peak hours (based on queue time data) | Install new taps, aiming to keep wait times **below 30 min** (UN standard) |
+| Shared taps with short queues (<30 min) | No immediate action (logistically difficult to cut further) | Gradual rollout of household taps as resources allow |
+| Broken infrastructure (reservoirs, pipes, pumps) | Immediate repairs to restore access for many at once | Develop monitoring to identify and prevent recurring breakdowns |
+
+---
+
+✨ For me, this wasn’t just about analyzing rows and columns—it was about **turning numbers into a roadmap** that communities, engineers, and policymakers could actually use.  
+
+---
+
