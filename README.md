@@ -4,15 +4,17 @@
 ## 📑 Table of Contents
 ---
 
-1. [📘 Project Overview  – Setting the stage for our data exploration journey](#️-project-overview--setting-the-stage-for-our-data-exploration-journey) 
-2. [🗂️ Cleaning Our Data – Updating employee data](#️-cleaning-our-data--updating-employee-data)  
-3. [🙌 Honouring the Workers – Finding our best](#-honouring-the-workers--finding-our-best)  
-4. [🌍 Analysing Locations – Understanding where the water sources are](#-analysing-locations--understanding-where-the-water-sources-are)  
-5. [💦 Diving into the Sources – Seeing the scope of the problem](#-diving-into-the-sources--seeing-the-scope-of-the-problem) 
-6. [🛠️ Start of a Solution – Thinking about how we can repair](#️-start-of-a-solution--thinking-about-how-we-can-repair)  
-7. [📊 Analysing Queues – Uncovering when citizens collect water](#-analysing-queues--uncovering-when-citizens-collect-water) 
-8. [📝 Reporting Insights – Assembling our insights into a story](#-reporting-insights--assembling-our-insights-into-a-story) 
-9. [🛠 Practical Solutions - Recommendation](#-practical-solutions---recommendation)  
+1. [📘 Project Overview – Setting the stage for our data exploration journey](#project-overview--setting-the-stage-for-our-data-exploration-journey)  
+2. [🗂️ Cleaning Our Data – Updating employee data](#cleaning-our-data--updating-employee-data)  
+3. [🙌 Honouring the Workers – Finding our best](#honouring-the-workers--finding-our-best)  
+4. [🌍 Analysing Locations – Understanding where the water sources are](#analysing-locations--understanding-where-the-water-sources-are)  
+5. [💦 Diving into the Sources – Seeing the scope of the problem](#diving-into-the-sources--seeing-the-scope-of-the-problem)  
+6. [🛠️ Start of a Solution – Thinking about how we can repair](#start-of-a-solution--thinking-about-how-we-can-repair)  
+7. [📊 Analysing Queues – Uncovering when citizens collect water](#analysing-queues--uncovering-when-citizens-collect-water)  
+8. [📝 Reporting Insights – Assembling our insights into a story](#reporting-insights--assembling-our-insights-into-a-story)  
+9. [🛠 Practical Solutions - Recommendation](#practical-solutions---recommendation)  
+
+
 ---
 
 ## 📘 Project Overview  – Setting the stage for our data exploration journey
